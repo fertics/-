@@ -1,0 +1,410 @@
+{% extends "base.html" %}
+
+{% block title %}地图展示 - 灾情管理系统{% endblock %}
+
+{% block header_title %}地图展示{% endblock %}
+
+{% block content %}
+<div class="map-display">
+    <div class="map-controls">
+        <div class="control-group">
+            <label>图层选择</label>
+            <div class="layer-toggles">
+                <label class="layer-toggle">
+                    <input type="checkbox" checked onchange="toggleLayer('disaster')"> 受灾区域
+                </label>
+                <label class="layer-toggle">
+                    <input type="checkbox" checked onchange="toggleLayer('rescue')"> 救援点位
+                </label>
+                <label class="layer-toggle">
+                    <input type="checkbox" onchange="toggleLayer('shelter')"> 避难场所
+                </label>
+                <label class="layer-toggle">
+                    <input type="checkbox" onchange="toggleLayer('medical')"> 医疗设施
+                </label>
+            </div>
+        </div>
+        <div class="control-group">
+            <label>时间范围</label>
+            <input type="date" class="date-control" onchange="updateMapData()">
+        </div>
+        <div class="control-group">
+            <label>搜索位置</label>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="输入地点名称或坐标">
+                <button class="search-btn" onclick="searchLocation()">搜索</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="map-container">
+        <div id="container"></div>
+        <div id="loadingTip">地图加载中...</div>
+        <div class="map-legend">
+            <h4>图例</h4>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #ff4444;"></span>
+                <span>严重受灾区</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #ffbb33;"></span>
+                <span>中度受灾区</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #00C851;"></span>
+                <span>救援点位</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #33b5e5;"></span>
+                <span>避难场所</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="map-info">
+        <div class="info-card">
+            <h3>区域概况</h3>
+            <div class="info-content">
+                <div class="info-item">
+                    <span class="info-label">受灾面积：</span>
+                    <span class="info-value">25.6 平方公里</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">救援点位：</span>
+                    <span class="info-value">8 个</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">避难场所：</span>
+                    <span class="info-value">12 处</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">医疗设施：</span>
+                    <span class="info-value">5 处</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .map-display {
+        padding: 20px;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 20px;
+        height: calc(100vh - 180px);
+        min-height: 600px;
+    }
+
+    .map-controls {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: flex;
+        gap: 30px;
+    }
+
+    .control-group {
+        flex: 1;
+    }
+
+    .control-group label {
+        display: block;
+        margin-bottom: 10px;
+        color: #555;
+        font-weight: bold;
+    }
+
+    .layer-toggles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .layer-toggle {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+
+    .date-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .search-box {
+        display: flex;
+        gap: 10px;
+    }
+
+    .search-box input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .search-btn {
+        padding: 8px 16px;
+        background: #2196F3;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .map-container {
+        position: relative;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow: hidden;
+        height: 100%;
+        min-height: 500px;
+    }
+
+    #container {
+        width: 100%;
+        height: 100%;
+        min-height: 500px;
+    }
+
+    #loadingTip {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        z-index: 999;
+    }
+
+    .map-legend {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .map-legend h4 {
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px;
+    }
+
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+    }
+
+    .map-info {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .info-card h3 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .info-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 4px;
+    }
+
+    .info-label {
+        color: #666;
+    }
+
+    .info-value {
+        color: #333;
+        font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+        .map-controls {
+            flex-direction: column;
+        }
+
+        .info-content {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<!-- 加载高德地图JSAPI -->
+<script>
+    // 显示加载提示
+    document.getElementById('loadingTip').style.display = 'block';
+</script>
+
+<!-- 加载高德地图API -->
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key={{ amap_key }}"></script>
+
+<script>
+    // 配置安全密钥
+    window._AMapSecurityConfig = {
+        securityJsCode: '{{ amap_security_code }}'
+    };
+
+    // 初始化地图
+    function initMap() {
+        try {
+            // 创建地图实例
+            const map = new AMap.Map('container', {
+                zoom: 12,
+                center: [104.06, 30.67],  // 成都市中心
+                viewMode: '2D'
+            });
+
+            // 隐藏加载提示
+            document.getElementById('loadingTip').style.display = 'none';
+
+            // 添加地图控件
+            map.plugin([
+                'AMap.ToolBar',
+                'AMap.Scale',
+                'AMap.OverView',
+                'AMap.MapType',
+                'AMap.Geolocation'
+            ], function(){
+                map.addControl(new AMap.ToolBar());
+                map.addControl(new AMap.Scale());
+                map.addControl(new AMap.OverView({isOpen: true}));
+                map.addControl(new AMap.MapType());
+                map.addControl(new AMap.Geolocation());
+            });
+
+            // 图层控制
+            const layers = {
+                disaster: [],
+                rescue: [],
+                shelter: [],
+                medical: []
+            };
+
+            // 模拟数据
+            const mockData = {
+                disaster: [
+                    { position: [104.06, 30.67], level: 'severe', radius: 2000 },
+                    { position: [104.08, 30.65], level: 'moderate', radius: 1500 }
+                ],
+                rescue: [
+                    { position: [104.07, 30.66], name: '救援点1' },
+                    { position: [104.05, 30.68], name: '救援点2' }
+                ],
+                shelter: [
+                    { position: [104.04, 30.65], name: '避难所1' },
+                    { position: [104.09, 30.67], name: '避难所2' }
+                ],
+                medical: [
+                    { position: [104.06, 30.65], name: '医院1' },
+                    { position: [104.08, 30.68], name: '医院2' }
+                ]
+            };
+
+            // 初始化图层
+            function initLayers() {
+                // 受灾区域
+                mockData.disaster.forEach(item => {
+                    const circle = new AMap.Circle({
+                        center: new AMap.LngLat(item.position[0], item.position[1]),
+                        radius: item.radius,
+                        strokeColor: item.level === 'severe' ? '#ff4444' : '#ffbb33',
+                        strokeWeight: 2,
+                        strokeOpacity: 0.5,
+                        fillColor: item.level === 'severe' ? '#ff4444' : '#ffbb33',
+                        fillOpacity: 0.2,
+                        zIndex: 50,
+                    });
+                    layers.disaster.push(circle);
+                    circle.setMap(map);
+                });
+
+                // 救援点位
+                mockData.rescue.forEach(item => {
+                    const marker = new AMap.Marker({
+                        position: new AMap.LngLat(item.position[0], item.position[1]),
+                        title: item.name,
+                        label: {
+                            content: item.name,
+                            direction: 'right'
+                        }
+                    });
+                    layers.rescue.push(marker);
+                    marker.setMap(map);
+                });
+            }
+
+            // 初始化图层
+            initLayers();
+
+            // 绑定全局函数
+            window.toggleLayer = function(type) {
+                layers[type].forEach(overlay => {
+                    if (overlay.getMap()) {
+                        overlay.setMap(null);
+                    } else {
+                        overlay.setMap(map);
+                    }
+                });
+            };
+
+            window.searchLocation = function() {
+                const value = document.getElementById('searchInput').value;
+                if (!value) return;
+
+                AMap.plugin('AMap.PlaceSearch', function(){
+                    const placeSearch = new AMap.PlaceSearch({
+                        map: map
+                    });
+                    placeSearch.search(value);
+                });
+            };
+
+            window.updateMapData = function() {
+                const date = document.querySelector('.date-control').value;
+                console.log('更新地图数据:', date);
+            };
+
+        } catch (error) {
+            console.error('地图初始化失败:', error);
+            document.getElementById('loadingTip').textContent = '地图加载失败，请刷新页面重试';
+        }
+    }
+
+    // 页面加载完成后初始化地图
+    window.onload = initMap;
+</script>
+{% endblock %} 

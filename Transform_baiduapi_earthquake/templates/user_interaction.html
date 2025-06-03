@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}用户交互模块 - 灾情管理系统{% endblock %}
+
+{% block header_title %}用户交互模块{% endblock %}
+
+{% block content %}
+<div class="user-interaction">
+    <h2>用户交互</h2>
+    <p>欢迎使用用户交互模块。这里可以：</p>
+    <ul>
+        <li>提交灾情报告</li>
+        <li>查看历史反馈</li>
+        <li>与其他用户交流</li>
+        <li>获取实时援助信息</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .user-interaction {
+        padding: 20px;
+    }
+
+    .user-interaction h2 {
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .user-interaction p {
+        color: #666;
+        margin-bottom: 15px;
+    }
+
+    .user-interaction ul {
+        list-style-type: none;
+    }
+
+    .user-interaction li {
+        padding: 10px 0;
+        color: #555;
+        border-bottom: 1px solid #eee;
+    }
+
+    .user-interaction li:last-child {
+        border-bottom: none;
+    }
+</style>
+{% endblock %} 

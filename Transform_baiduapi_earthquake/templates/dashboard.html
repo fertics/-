@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主面板 - 灾情管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .module-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .module-title {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .module-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>灾情管理系统</h1>
+        <a href="{{ url_for('logout') }}" class="logout-btn">退出登录</a>
+    </header>
+
+    <div class="container">
+        <div class="modules-grid">
+            <a href="{{ url_for('user_interaction') }}" class="module-card">
+                <div class="module-icon">👥</div>
+                <h2 class="module-title">用户交互模块</h2>
+                <p class="module-description">与用户进行实时交互，收集和处理用户反馈</p>
+            </a>
+
+            <a href="{{ url_for('disaster_analysis') }}" class="module-card">
+                <div class="module-icon">📊</div>
+                <h2 class="module-title">灾情分析与可视化</h2>
+                <p class="module-description">数据分析和可视化展示灾情信息</p>
+            </a>
+
+            <a href="{{ url_for('building_safety') }}" class="module-card">
+                <div class="module-icon">🏠</div>
+                <h2 class="module-title">房屋安全性评估</h2>
+                <p class="module-description">评估建筑物的安全状况和风险等级</p>
+            </a>
+
+            <a href="{{ url_for('disaster_comparison') }}" class="module-card">
+                <div class="module-icon">🔄</div>
+                <h2 class="module-title">灾前灾后对比</h2>
+                <p class="module-description">对比分析灾害前后的变化情况</p>
+            </a>
+
+            <a href="{{ url_for('map_display') }}" class="module-card">
+                <div class="module-icon">🗺️</div>
+                <h2 class="module-title">地图展示</h2>
+                <p class="module-description">地理信息系统展示灾害相关数据</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html> 

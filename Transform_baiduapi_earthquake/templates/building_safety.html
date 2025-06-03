@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}房屋安全性评估 - 灾情管理系统{% endblock %}
+
+{% block header_title %}房屋安全性评估{% endblock %}
+
+{% block content %}
+<div class="building-safety">
+    <h2>房屋安全性评估</h2>
+    <div class="assessment-container">
+        <div class="assessment-form">
+            <h3>添加新评估</h3>
+            <form>
+                <div class="form-group">
+                    <label>建筑物地址</label>
+                    <input type="text" placeholder="输入建筑物详细地址">
+                </div>
+                <div class="form-group">
+                    <label>建筑类型</label>
+                    <select>
+                        <option>住宅楼</option>
+                        <option>办公楼</option>
+                        <option>商业建筑</option>
+                        <option>工业建筑</option>
+                        <option>其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>建筑年龄</label>
+                    <input type="number" placeholder="年份">
+                </div>
+                <div class="form-group">
+                    <label>损坏程度评估</label>
+                    <div class="rating-buttons">
+                        <button type="button" class="rating-btn">轻微</button>
+                        <button type="button" class="rating-btn">中等</button>
+                        <button type="button" class="rating-btn">严重</button>
+                        <button type="button" class="rating-btn">危险</button>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">提交评估</button>
+            </form>
+        </div>
+        <div class="assessment-list">
+            <h3>最近评估记录</h3>
+            <div class="assessment-items">
+                <div class="assessment-item">
+                    <div class="status-badge danger">危险</div>
+                    <h4>某某小区A栋</h4>
+                    <p>住宅楼 | 建于2000年</p>
+                    <p class="assessment-date">评估时间：2024-03-20</p>
+                </div>
+                <div class="assessment-item">
+                    <div class="status-badge warning">中等</div>
+                    <h4>某某广场B座</h4>
+                    <p>办公楼 | 建于2010年</p>
+                    <p class="assessment-date">评估时间：2024-03-19</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .building-safety {
+        padding: 20px;
+    }
+
+    .building-safety h2 {
+        color: #333;
+        margin-bottom: 30px;
+    }
+
+    .assessment-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    .assessment-form, .assessment-list {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+    }
+
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .rating-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .rating-btn {
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .rating-btn:hover {
+        background: #f0f0f0;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 12px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .submit-btn:hover {
+        background: #45a049;
+    }
+
+    .assessment-items {
+        margin-top: 20px;
+    }
+
+    .assessment-item {
+        padding: 15px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        color: white;
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+
+    .status-badge.danger {
+        background: #ff4444;
+    }
+
+    .status-badge.warning {
+        background: #ffbb33;
+    }
+
+    .assessment-item h4 {
+        margin: 0;
+        color: #333;
+    }
+
+    .assessment-item p {
+        margin: 5px 0;
+        color: #666;
+    }
+
+    .assessment-date {
+        font-size: 12px;
+        color: #999;
+    }
+
+    @media (max-width: 768px) {
+        .assessment-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %} 
